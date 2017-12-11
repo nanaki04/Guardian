@@ -30,7 +30,7 @@ defmodule Guardian.Secret do
 
   """
 
-  @callback make_initial_state() :: map
+  @callback make_initial_state(String.t) :: map
   @callback id_to_name(String.t) :: GenServer.name
 
   defmacro __using__(_opts) do
