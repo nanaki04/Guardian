@@ -21,6 +21,7 @@ defmodule Guardian.Application do
   end
 
   def start_child(child) do
+    :ok = Application.ensure_started(:guardian)
     Supervisor.start_child Guardian.Supervisor, child
   end
 end
