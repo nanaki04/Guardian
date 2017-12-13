@@ -19,7 +19,10 @@ defmodule Guardian.Cellar.Guardian do
         Supervisor.start_link children, options
       end
 
-      def start_child(id), do: Supervisor.start_child(__MODULE__, [id, apply(@secret, :make_initial_state, [id])])
+      def start_child(id) do
+        unless Guardian.active?(__MODULE__), do: Guardian.Application.start_child(supervisor(__MODULE__, []))
+        Supervisor.start_child(__MODULE__, [id, apply(@secret, :make_initial_state, [id])])
+      end
 
       def watch(id), do: watch(id, apply(@cellar, :active?, [id]))
       def watch(id, false), do: verify id, start_child(id)
@@ -28,13 +31,12 @@ defmodule Guardian.Cellar.Guardian do
       defp verify(_, {:ok, _}), do: :ok
       defp verify(_, {:ok, _, _}), do: :ok
       defp verify(id, e), do: e
-      #defp verify(id, _), do: {:error, "failed to start cellar"}
     end
   end
 
   def __after_compile__(env, _) do
     import Supervisor.Spec
 
-    Guardian.Application.start_child(supervisor(env.module, []))
+    unless Guardian.active?(env.module), do: Guardian.Application.start_child(supervisor(env.module, []))
   end
 end

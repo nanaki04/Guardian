@@ -18,6 +18,7 @@ defmodule Guardian do
       end
 
       def start_child(id) do
+        unless Guardian.active?(__MODULE__), do: Guardian.Application.start_child(supervisor(__MODULE__, []))
         apply(Module.concat(@secret, Cellar.Guardian), :watch, [id])
         |> start_child(id)
       end
@@ -35,9 +36,16 @@ defmodule Guardian do
     end
   end
 
+  def active?(module) do
+    case GenServer.whereis(module) do
+      nil -> false
+      _ -> true
+    end
+  end
+
   def __after_compile__(env, _) do
     import Supervisor.Spec
 
-    Guardian.Application.start_child(supervisor(env.module, []))
+    unless active?(env.module), do: Guardian.Application.start_child(supervisor(env.module, []))
   end
 end
