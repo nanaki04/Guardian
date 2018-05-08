@@ -24,4 +24,16 @@ defmodule Guardian.Application do
     :ok = Application.ensure_started(:guardian)
     Supervisor.start_child Guardian.Supervisor, child
   end
+
+  def terminate_child(id) do
+    case Supervisor.terminate_child(Guardian.Supervisor, id) do
+      {:error, :not_found} ->
+        Supervisor.delete_child(Guardian.Supervisor, id)
+        :ok
+      :ok ->
+        Supervisor.delete_child(Guardian.Supervisor, id)
+        :ok
+      x -> x
+    end
+  end
 end

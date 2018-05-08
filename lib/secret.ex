@@ -75,8 +75,11 @@ defmodule Guardian.Secret do
 
       @spec stop_gracefully(String.t, boolean) :: :ok
       def stop_gracefully(id, delete_state \\ false) do
-        # TODO remove cellar and guardians if delete_state is true
         GenServer.stop id_to_name(id), :normal
+        if delete_state do
+          Cellar.stop(id)
+          apply(Module.concat(__MODULE__, Guardian), :stop, [])
+        end
       end
 
       def init(state) do

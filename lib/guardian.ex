@@ -25,6 +25,10 @@ defmodule Guardian do
       def start_child(:ok, id), do: Supervisor.start_child(__MODULE__, [id])
       def start_child(error, id), do: error
 
+      def stop() do
+        Guardian.Application.terminate_child(__MODULE__)
+      end
+
       def guard(id), do: guard id, apply(@secret, :active?, [id])
       def guard(id, false), do: verify id, start_child(id)
       def guard(id, true), do: :ok

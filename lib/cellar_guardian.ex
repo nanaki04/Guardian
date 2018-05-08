@@ -24,6 +24,10 @@ defmodule Guardian.Cellar.Guardian do
         Supervisor.start_child(__MODULE__, [id, apply(@secret, :make_initial_state, [id])])
       end
 
+      def stop(id) do
+        Supervisor.stop(__MODULE__, :normal)
+      end
+
       def watch(id), do: watch(id, apply(@cellar, :active?, [id]))
       def watch(id, false), do: verify id, start_child(id)
       def watch(id, true), do: :ok
