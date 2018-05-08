@@ -27,6 +27,11 @@ defmodule Guardian.Secret do
       false
       ...> Server.add "1", 2
       10
+      ...> Server.stop_gracefully("1", true)
+      ...> Server.active? "1"
+      false
+      ...> Server.add "1", 2
+      7
 
   """
 

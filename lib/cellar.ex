@@ -16,6 +16,10 @@ defmodule Guardian.Cellar do
         GenServer.start_link __MODULE__, state, name: id_to_name(id)
       end
 
+      def stop(id) do
+        GenServer.stop id_to_name(id), :normal
+      end
+
       @spec store(String.t, state) :: state
       def store(id, state) do
         GenServer.call id_to_name(id), {:store, state}
