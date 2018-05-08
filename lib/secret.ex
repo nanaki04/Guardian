@@ -80,11 +80,12 @@ defmodule Guardian.Secret do
 
       @spec stop_gracefully(String.t, boolean) :: :ok
       def stop_gracefully(id, delete_state \\ false) do
-        GenServer.stop id_to_name(id), :normal
+        :ok = GenServer.stop id_to_name(id), :normal
         if delete_state do
-          Cellar.stop(id)
-          apply(Module.concat(__MODULE__, Guardian), :stop, [])
+          :ok = Cellar.stop(id)
+          :ok = apply(Module.concat(__MODULE__, Guardian), :stop, [])
         end
+        :ok
       end
 
       def init(state) do
